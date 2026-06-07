@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Usman Ajmal — Principal UI Engineer</title>
+
+  <!-- Fonts: Space Grotesk + DM Sans + JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg, #0a0a0e);
+      color: var(--text-1, #e8e8ec);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      font-family: 'DM Sans', sans-serif;
+      transition: background 0.35s ease, color 0.3s ease;
+    }
+
+    /* Grid lines background */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
+      opacity: var(--dot-opacity, 1);
+      background-image:
+        linear-gradient(var(--grid-color, rgba(255,255,255,0.08)) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid-color, rgba(255,255,255,0.08)) 1px, transparent 1px);
+      background-size: 60px 60px;
+      transition: opacity 0.3s ease;
+    }
+
+    /* Pulse animation for green dot */
+    @keyframes pulse {
+      0%, 100% { box-shadow: 0 0 4px currentColor; }
+      50% { box-shadow: 0 0 12px currentColor; }
+    }
+    .pulse-dot { animation: pulse 2.5s ease-in-out infinite; color: inherit; }
+
+    #root { position: relative; z-index: 1; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg); }
+    ::-webkit-scrollbar-thumb { background: var(--border-1); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+
+    /* Selection */
+    ::selection { background: var(--text-3); color: var(--text-1); }
+
+    /* Scroll animations — CSS-driven */
+    .anim-in {
+      opacity: 0;
+      transform: translate(var(--anim-tx, 0), var(--anim-ty, 24px));
+    }
+    .anim-ready {
+      transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1) var(--anim-delay, 0s),
+                  transform 0.7s cubic-bezier(0.16,1,0.3,1) var(--anim-delay, 0s);
+    }
+    .anim-ready.anim-visible {
+      opacity: 1 !important;
+      transform: translate(0, 0) !important;
+    }
+
+    /* Responsive */
+    @media (max-width: 840px) {
+      .hero-grid {
+        grid-template-columns: 1fr !important;
+        gap: 48px !important;
+      }
+      .hero-grid > div:last-child {
+        max-width: 280px;
+        margin: 0 auto;
+      }
+      .about-grid {
+        grid-template-columns: 1fr !important;
+      }
+      .career-row {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+      }
+      .contact-grid {
+        grid-template-columns: 1fr !important;
+      }
+      .stats-row {
+        gap: 32px !important;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .stats-row {
+        flex-wrap: wrap;
+        gap: 24px !important;
+      }
+      .writing-row {
+        grid-template-columns: 1fr !important;
+        gap: 4px !important;
+      }
+      .writing-row time {
+        order: -1;
+      }
+      .writing-row > div:last-child {
+        display: none;
+      }
+      header nav {
+        gap: 20px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="ua-components.jsx"></script>
+
+  <script type="text/babel">
+    const THEMES = {
+      dark: {
+        bg: '#0a0a0e',
+        'bg-surface': 'rgba(255,255,255,0.03)',
+        'bg-hover': 'rgba(255,255,255,0.05)',
+        'text-1': '#e8e8ec',
+        'text-2': 'rgba(255,255,255,0.55)',
+        'text-3': 'rgba(255,255,255,0.35)',
+        'text-4': 'rgba(255,255,255,0.2)',
+        'border-1': 'rgba(255,255,255,0.08)',
+        'border-2': 'rgba(255,255,255,0.05)',
+        'nav-bg': 'rgba(10,10,14,0.92)',
+        'grid-color': 'rgba(255,255,255,0.14)',
+        'tag-bg': 'rgba(255,255,255,0.04)',
+        'photo-brightness': '0.95',
+      },
+      'warm-dark': {
+        bg: '#171411',
+        'bg-surface': 'rgba(255,255,255,0.04)',
+        'bg-hover': 'rgba(255,255,255,0.06)',
+        'text-1': '#ede8df',
+        'text-2': 'rgba(255,255,255,0.55)',
+        'text-3': 'rgba(255,255,255,0.35)',
+        'text-4': 'rgba(255,255,255,0.2)',
+        'border-1': 'rgba(255,255,255,0.08)',
+        'border-2': 'rgba(255,255,255,0.05)',
+        'nav-bg': 'rgba(23,20,17,0.92)',
+        'grid-color': 'rgba(255,255,255,0.10)',
+        'tag-bg': 'rgba(255,255,255,0.04)',
+        'photo-brightness': '0.95',
+      },
+      light: {
+        bg: '#ffffff',
+        'bg-surface': 'rgba(0,0,0,0.03)',
+        'bg-hover': 'rgba(0,0,0,0.05)',
+        'text-1': '#1a1a1f',
+        'text-2': 'rgba(0,0,0,0.6)',
+        'text-3': 'rgba(0,0,0,0.4)',
+        'text-4': 'rgba(0,0,0,0.2)',
+        'border-1': 'rgba(0,0,0,0.1)',
+        'border-2': 'rgba(0,0,0,0.06)',
+        'nav-bg': 'rgba(255,255,255,0.92)',
+        'grid-color': 'rgba(0,0,0,0.16)',
+        'tag-bg': 'rgba(0,0,0,0.04)',
+        'photo-brightness': '1',
+      },
+      grey: {
+        bg: '#e8e8e8',
+        'bg-surface': 'rgba(0,0,0,0.03)',
+        'bg-hover': 'rgba(0,0,0,0.05)',
+        'text-1': '#1a1a1f',
+        'text-2': 'rgba(0,0,0,0.6)',
+        'text-3': 'rgba(0,0,0,0.4)',
+        'text-4': 'rgba(0,0,0,0.2)',
+        'border-1': 'rgba(0,0,0,0.1)',
+        'border-2': 'rgba(0,0,0,0.06)',
+        'nav-bg': 'rgba(232,232,232,0.92)',
+        'grid-color': 'rgba(0,0,0,0.20)',
+        'tag-bg': 'rgba(0,0,0,0.04)',
+        'photo-brightness': '1',
+      },
+    };
+
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "accentColor": "#1F8A5B",
+      "theme": "grey",
+      "dotGrid": false,
+      "animations": true
+    }/*EDITMODE-END*/;
+
+    function App() {
+      const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+      const accent = t.accentColor;
+
+      // Apply theme by setting CSS vars directly on documentElement
+      React.useEffect(() => {
+        const theme = THEMES[t.theme] || THEMES.dark;
+        const root = document.documentElement;
+        Object.entries(theme).forEach(([key, val]) => {
+          root.style.setProperty('--' + key, val);
+        });
+      }, [t.theme]);
+
+      // Dot grid toggle
+      React.useEffect(() => {
+        document.documentElement.style.setProperty('--dot-opacity', t.dotGrid ? '1' : '0');
+      }, [t.dotGrid]);
+
+      return (
+        <AnimContext.Provider value={t.animations}>
+          <Nav accent={accent} />
+          <Hero accent={accent} />
+          <About accent={accent} />
+          <Career accent={accent} />
+          <Writing accent={accent} />
+          <Contact accent={accent} />
+
+          {/* Floating settings button for standalone use */}
+          <button onClick={() => window.postMessage({ type: '__activate_edit_mode' }, '*')}
+            style={{
+              position: 'fixed', bottom: 24, right: 24, zIndex: 90,
+              width: 44, height: 44, borderRadius: 12,
+              background: 'var(--bg-surface)', border: '1px solid var(--border-1)',
+              backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'var(--text-3)', fontSize: 20, transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = accent; e.currentTarget.style.color = accent; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border-1)'; e.currentTarget.style.color = 'var(--text-3)'; }}
+            title="Settings"
+          >⚙</button>
+
+          <TweaksPanel>
+            <TweakSection label="Theme" />
+            <TweakColor label="Accent" value={t.accentColor}
+              options={['#1F8A5B', '#3B82F6', '#f59e0b', '#ef4444', '#8B5CF6']}
+              onChange={v => setTweak('accentColor', v)} />
+            <TweakSelect label="Background" value={t.theme}
+              options={['dark', 'warm-dark', 'light', 'grey']}
+              onChange={v => setTweak('theme', v)} />
+            <TweakToggle label="Grid lines" value={t.dotGrid}
+              onChange={v => setTweak('dotGrid', v)} />
+            <TweakSection label="Effects" />
+            <TweakToggle label="Animations" value={t.animations}
+              onChange={v => setTweak('animations', v)} />
+          </TweaksPanel>
+        </AnimContext.Provider>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+
+  <!-- Bundler thumbnail -->
+  <template id="__bundler_thumbnail">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+      <rect width="120" height="120" fill="#0a0a0e"/>
+      <text x="60" y="54" text-anchor="middle" font-family="sans-serif" font-weight="700" font-size="32" fill="#e8e8ec">UA</text>
+      <rect x="35" y="64" width="50" height="4" rx="2" fill="#1F8A5B"/>
+      <text x="60" y="88" text-anchor="middle" font-family="sans-serif" font-size="8" fill="#666">usmanajmal.com</text>
+    </svg>
+  </template>
+
+</body>
+</html>
